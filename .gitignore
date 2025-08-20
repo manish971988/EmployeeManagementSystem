@@ -1,3 +1,8 @@
-# Ignore build output folders
-bin/
-obj/
+# Ignore build output folders for API and UI
+API/bin/
+API/obj/
+UI/bin/
+UI/obj/
+# Also ignore any nested bin/obj folders
+**/bin/
+**/obj/
