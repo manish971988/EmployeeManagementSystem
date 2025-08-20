@@ -40,7 +40,8 @@ const login = async () => {
       password: password.value
     })
     localStorage.setItem('token', response.data.token)
-  router.push('/home')
+    localStorage.setItem('userEmail', email.value)
+    router.push('/home')
   } catch (err) {
     error.value = 'Invalid credentials'
   }
