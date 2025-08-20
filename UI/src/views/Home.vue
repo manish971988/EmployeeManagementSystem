@@ -2,7 +2,8 @@
   <div class="home-bg">
     <nav class="navbar">
       <div class="navbar-title">{{ userEmail }}</div>
-      <button class="logout-btn" @click="logout">Logout</button>
+  <button class="add-employee-btn" @click="goToAddEmployee">Add Employee</button>
+  <button class="logout-btn" @click="logout">Logout</button>
     </nav>
     <div class="home-content">
       <EmployeeTable />
@@ -17,6 +18,9 @@ import EmployeeTable from '../components/EmployeeTable.vue'
 
 const router = useRouter()
 const userEmail = localStorage.getItem('userEmail') || 'User';
+function goToAddEmployee() {
+  router.push('/add-employee');
+}
 function logout() {
   localStorage.removeItem('token')
   localStorage.removeItem('userEmail')
@@ -24,6 +28,21 @@ function logout() {
 }
 </script>
 <style scoped>
+.add-employee-btn {
+  margin-left: 16px;
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-employee-btn:hover {
+  background: #1976d2;
+}
 .home-bg {
   background: #fff;
   min-height: 100vh;

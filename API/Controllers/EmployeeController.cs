@@ -15,11 +15,26 @@ namespace API.Controllers
             _context = context;
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var employees = await _context.Employees.ToListAsync();
             return Ok(employees);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddEmployee([FromBody] Employee employee)
+        {
+            if (employee == null || string.IsNullOrWhiteSpace(employee.Name) || string.IsNullOrWhiteSpace(employee.Email)
+                || string.IsNullOrWhiteSpace(employee.Designation) || string.IsNullOrWhiteSpace(employee.Department)
+                || employee.JoiningDate == default || employee.Salary <= 0)
+            {
+                return BadRequest("Invalid employee data.");
+            }
+            _context.Employees.Add(employee);
+            await _context.SaveChangesAsync();
+            return Ok(employee);
         }
 
         [HttpPost("seed")]
