@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using API.Data;
 using API.Models;
@@ -57,6 +58,42 @@ namespace API.Controllers
                 new Employee { Name = "Ivy Queen", Email = "ivy@example.com", Designation = "Lead", Department = "Operations", JoiningDate = DateTime.Parse("2018-08-25"), Salary = 90000 }
             };
             _context.Employees.AddRange(data);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null) return NotFound();
+            return Ok(employee);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] Employee employee)
+        {
+            var existingEmployee = await _context.Employees.FindAsync(id);
+            if (existingEmployee == null) return NotFound();
+
+            // Update properties
+            existingEmployee.Name = employee.Name;
+            existingEmployee.Email = employee.Email;
+            existingEmployee.Designation = employee.Designation;
+            existingEmployee.Department = employee.Department;
+            existingEmployee.JoiningDate = employee.JoiningDate;
+            existingEmployee.Salary = employee.Salary;
+
+            await _context.SaveChangesAsync();
+            return Ok(existingEmployee);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            var employee = await _context.Employees.FindAsync(id);
+            if (employee == null) return NotFound();
+            _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
             return Ok();
         }

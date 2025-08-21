@@ -1,7 +1,7 @@
 <template>
   <div class="add-employee-bg">
     <div class="add-employee-card">
-      <h2>Add Employee</h2>
+      <h2>{{ isEdit ? 'Edit' : 'Add' }} Employee</h2>
       <form @submit.prevent="submitForm">
         <div class="form-group">
           <label>Name</label>
@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -52,6 +52,30 @@ const form = ref({
   department: '',
   joiningDate: today,
   salary: ''
+});
+const isEdit = ref(false);
+const employeeId = ref(null);
+
+onMounted(async () => {
+  const id = router.currentRoute.value.query.id;
+  if (id) {
+    isEdit.value = true;
+    employeeId.value = id;
+    try {
+      const response = await axios.get(`http://localhost:5154/api/employee/${id}`);
+      const emp = response.data;
+      form.value = {
+        name: emp.name,
+        email: emp.email,
+        designation: emp.designation,
+        department: emp.department,
+        joiningDate: emp.joiningDate ? emp.joiningDate.slice(0, 10) : today,
+        salary: emp.salary
+      };
+    } catch (err) {
+      error.value = 'Failed to load employee.';
+    }
+  }
 });
 
 function validateForm() {
@@ -76,10 +100,14 @@ function validateForm() {
 async function submitForm() {
   if (!validateForm()) return;
   try {
-    await axios.post('http://localhost:5154/api/employee', form.value);
+    if (isEdit.value) {
+      await axios.put(`http://localhost:5154/api/employee/${employeeId.value}`, form.value);
+    } else {
+      await axios.post('http://localhost:5154/api/employee', form.value);
+    }
     router.push('/home');
   } catch (err) {
-    error.value = 'Failed to add employee.';
+    error.value = isEdit.value ? 'Failed to update employee.' : 'Failed to add employee.';
   }
 }
 
